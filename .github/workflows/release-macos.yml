@@ -15,7 +15,7 @@ on:
       arch:
         description: Architettura da costruire (all, arm64, x86_64)
         required: true
-        default: all
+        default: x86_64
         type: choice
         options: [all, arm64, x86_64]
 
@@ -34,8 +34,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.tag }}
 
       - name: Install dependencies
         run: brew install cmake ninja qt qtkeychain openssl@3 brotli webp
@@ -110,10 +108,24 @@ jobs:
           # l'app notarizzata. Pero' macOS 26 rifiuta il binario linker-signed
           # lasciato da clang quando il bundle non ha il suo CodeResources:
           # una firma ad-hoc dell'intero bundle sigilla risorse e dipendenze.
+          # Edicion CX8ANM: icono del cóndor para el .app
+          iconset="$RUNNER_TEMP/decodxlog.iconset"
+          mkdir -p "$iconset"
+          for size in 16 32 128 256 512; do
+            sips -z $size $size resources/decodxlog.png --out "$iconset/icon_${size}x${size}.png" >/dev/null
+            double=$((size*2))
+            sips -z $double $double resources/decodxlog.png --out "$iconset/icon_${size}x${size}@2x.png" >/dev/null
+          done
+          iconutil -c icns "$iconset" -o build/DecoDXLog.app/Contents/Resources/decodxlog.icns
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleIconFile" build/DecoDXLog.app/Contents/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string decodxlog.icns" build/DecoDXLog.app/Contents/Info.plist
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleDisplayName" build/DecoDXLog.app/Contents/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string DecoDXLog CX8ANM" build/DecoDXLog.app/Contents/Info.plist
+
           codesign --force --deep --sign - --timestamp=none build/DecoDXLog.app
           codesign --verify --deep --strict --verbose=2 build/DecoDXLog.app
 
-          hdiutil create -volname "DecoDXLog $version" \
+          hdiutil create -volname "DecoDXLog CX8ANM $version" \
             -srcfolder build/DecoDXLog.app \
             -ov -format UDZO \
             "release-assets/DecoDXLog-$version-macos-${{ matrix.arch }}.dmg"
@@ -140,36 +152,10 @@ jobs:
           hdiutil detach "$mount_point"
           trap - EXIT
 
-      - name: Sign macOS package for automatic updates
-        env:
-          DECODXLOG_ELISIR80_RELEASE_SIGNING_KEY: ${{ secrets.DECODXLOG_ELISIR80_RELEASE_SIGNING_KEY }}
-        run: |
-          test -n "$DECODXLOG_ELISIR80_RELEASE_SIGNING_KEY"
-          key_file="$(mktemp)"
-          trap 'rm -f "$key_file"' EXIT
-          printf '%s\n' "$DECODXLOG_ELISIR80_RELEASE_SIGNING_KEY" > "$key_file"
-          version="${{ inputs.tag }}"
-          version="${version#v}"
-          # QSysInfo chiama Apple Silicon "arm64", ma l'auto-update lo
-          # normalizza in "aarch64". Il nome del manifest deve usare la forma
-          # normalizzata, altrimenti il DMG viene trovato ma non la sua firma.
-          manifest_arch="${{ matrix.arch }}"
-          [ "$manifest_arch" = "arm64" ] && manifest_arch="aarch64"
-          cmake --build build --target decodxlog_sign
-          build/decodxlog_sign sign --key-file "$key_file" \
-            --repository elisir80/DecodxLog --version "$version" --out release-assets \
-            "release-assets/DecoDXLog-$version-macos-${{ matrix.arch }}.dmg"
-          mv release-assets/decodxlog-release.json "release-assets/decodxlog-release-macos-$manifest_arch.json"
-          mv release-assets/decodxlog-release.json.sig "release-assets/decodxlog-release-macos-$manifest_arch.json.sig"
-
-      - name: Ensure release exists
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG_NAME: ${{ github.event.inputs.tag || github.ref_name }}
-        run: gh release view "$TAG_NAME" >/dev/null 2>&1 || gh release create "$TAG_NAME" --title "DecoDXLog $TAG_NAME" --notes "DecoDXLog $TAG_NAME"
-
-      - name: Upload release assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG_NAME: ${{ github.event.inputs.tag || github.ref_name }}
-        run: gh release upload "$TAG_NAME" release-assets/* --clobber
+      # Edicion CX8ANM: sin firma de auto-update ni publicacion; solo artefacto privado.
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DecoDXLog-macos-${{ matrix.arch }}
+          path: release-assets/*.dmg
+          if-no-files-found: error
