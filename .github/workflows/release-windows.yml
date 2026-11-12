@@ -38,9 +38,7 @@ jobs:
     steps:
       - name: Checkout release source
         uses: actions/checkout@v4
-        with:
-          # Build exactly the same tagged snapshot as the other platforms.
-          ref: ${{ inputs.tag }}
+        # Edicion CX8ANM: se compila la rama actual (no hay tags en el repo privado).
 
       - name: Install MSYS2 MinGW and Qt
         uses: msys2/setup-msys2@v2
