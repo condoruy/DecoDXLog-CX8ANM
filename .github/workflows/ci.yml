@@ -1,9 +1,7 @@
 name: CI
 
+# Edicion CX8ANM: repo privado, no se corre en cada push para ahorrar minutos.
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 jobs:

@@ -494,7 +494,7 @@ int main(int argc, char* argv[])
 
     // Lingua dell'interfaccia: quella scelta, o quella del sistema. L'inglese e'
     // la lingua dei sorgenti, quindi non ha un file da caricare.
-    const QString configured = QSettings().value(QStringLiteral("ui/language"), QStringLiteral("auto")).toString();
+    const QString configured = QSettings().value(QStringLiteral("ui/language"), QStringLiteral("es")).toString();  // CX8ANM: espanol por defecto
     // "auto" vuol dire come il sistema. Il cinese va distinto: tradizionale a
     // Taiwan, Hong Kong e Macao, semplificato altrove — e la differenza non si
     // vede dalle prime due lettere.

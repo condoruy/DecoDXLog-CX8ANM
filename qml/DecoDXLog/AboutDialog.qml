@@ -91,6 +91,19 @@ DialogFrame {
                     color: Theme.textSecondary
                     font.pixelSize: 12
                 }
+                Text {
+                    text: "Edición CX8ANM · Cóndor Tecnológico · Uruguay"
+                    color: Theme.secondaryColor
+                    font.pixelSize: 12
+                    font.weight: Font.DemiBold
+                }
+                Text {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: "Versión personalizada basada en DecoDXLog de Martino Merola IU8LMC y Salvatore Raccampo 9H1SR. Licencia GPL-3.0."
+                    color: Theme.textSecondary
+                    font.pixelSize: 11
+                }
             }
         }
 

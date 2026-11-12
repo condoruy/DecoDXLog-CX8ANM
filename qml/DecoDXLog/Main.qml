@@ -20,7 +20,7 @@ RoundedWindow {
     minimumWidth: Math.min(1100, Screen.desktopAvailableWidth > 0 ? Screen.desktopAvailableWidth : 1100)
     minimumHeight: 640
     visible: true
-    title: "DecoDXLog " + decolog.version
+    title: "DecoDXLog CX8ANM " + decolog.version
            + (decolog.stationProfiles.activeProfile.stationCallsign
               ? " — " + decolog.stationProfiles.activeProfile.stationCallsign : "")
     // La cornice principale resta nelle mani del sistema operativo: su macOS

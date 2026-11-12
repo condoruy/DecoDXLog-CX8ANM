@@ -20,23 +20,25 @@
 #endif
 
 #define AppName "DecoDXLog"
-#define Publisher "Martino Merola — IU8LMC"
-#define Home "https://github.com/iu8lmc/DecoDXLog"
+; Edicion CX8ANM: nombre visible propio, el ejecutable sigue siendo DecoDXLog.exe
+#define DisplayName "DecoDXLog CX8ANM"
+#define Publisher "CX8ANM - Cóndor Tecnológico (basado en DecoDXLog de IU8LMC)"
+#define Home "https://github.com/condoruy/DecoDXLog-CX8ANM"
 
 [Setup]
 ; L'AppId non cambia mai: e' quello che fa riconoscere una versione gia'
 ; installata e la aggiorna invece di metterne una seconda accanto.
-AppId={{8F5C2E1A-4B7D-4E39-9C0A-DECODXLOG0001}
-AppName={#AppName}
+AppId={{6C1B0E7D-2A3F-4C58-B8D1-C8A5D0CC8A01}
+AppName={#DisplayName}
 AppVersion={#Version}
-AppVerName={#AppName} {#Version}
+AppVerName={#DisplayName} {#Version}
 VersionInfoVersion={#Version}
 AppPublisher={#Publisher}
 AppPublisherURL={#Home}
 AppSupportURL={#Home}/issues
 AppUpdatesURL={#Home}/releases
-DefaultDirName={autopf}\{#AppName}
-DefaultGroupName={#AppName}
+DefaultDirName={autopf}\{#DisplayName}
+DefaultGroupName={#DisplayName}
 DisableProgramGroupPage=yes
 ; Per l'utente, senza UAC: cosi' «Aggiorna ora» non deve chiedere niente a
 ; nessuno, e chi non e' amministratore del proprio computer installa lo stesso.
@@ -46,7 +48,7 @@ OutputDir={#Out}
 OutputBaseFilename={#AppName}-{#Version}-setup
 SetupIconFile=..\resources\decodxlog.ico
 UninstallDisplayIcon={app}\{#AppName}.exe
-UninstallDisplayName={#AppName} {#Version}
+UninstallDisplayName={#DisplayName} {#Version}
 WizardStyle=modern
 Compression=lzma2/max
 SolidCompression=yes
@@ -81,11 +83,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "{#Source}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppName}.exe"
-Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppName}.exe"; Tasks: desktopicon
+Name: "{autoprograms}\{#DisplayName}"; Filename: "{app}\{#AppName}.exe"
+Name: "{autodesktop}\{#DisplayName}"; Filename: "{app}\{#AppName}.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#AppName}.exe"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#AppName}.exe"; Description: "{cm:LaunchProgram,{#DisplayName}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
 ; Quello che il programma si crea dentro la sua cartella (cache dei moduli QML):

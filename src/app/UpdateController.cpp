@@ -250,6 +250,13 @@ void UpdateController::checkNow()
 
 void UpdateController::runCheck(bool announce)
 {
+    // Edicion CX8ANM: sin actualizador automatico, para que no se instale la
+    // version oficial encima de esta. Las nuevas versiones se compilan en el
+    // repositorio condoruy/DecoDXLog-CX8ANM.
+    Q_UNUSED(announce);
+    setStatus(QStringLiteral("actualizaciones automáticas desactivadas en la edición CX8ANM"));
+    emit changed();
+    return;
     if (m_fetcher.busy())
         return;
     if (announce)
